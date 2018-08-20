@@ -71,22 +71,20 @@ def create_tasks():
 @todo_app.route("/task/<ObjectId:task_id>", methods = ['PUT'])
 def update_task(task_id):
     db_task = mongo.db.tododb
+    data = request.get_json()
     task = db_task.find_one_or_404({"_id": task_id})
-    title = request.get_json("title", task["title"])
-    description = request.get_json('description', task["description"])
-    done = bool(request.get_json("done", task["done"]))
-    task["title"] = title
-    task["description"] = description
-    task["done"] = done
+    task["title"]= data["title"]
+    task["description"] = data['description']
+    task["done"] = bool(data["done"])
     db_task.save(task)
     response = {
                     'updated data is': 'successfully ', 
-                    'title': title, 
-                    'description': description,
-                    'done': bool(done)
+                    'title': task['title'], 
+                    'description': task['description'],
+                    'done': bool(task['done'])
                 }
 
-    return jsonify({'response': 'response'}) , 200
+    return jsonify({'response': response}) , 200
 
 '''delete specific task'''
 @todo_app.route("/task/<ObjectId:task_id>", methods = ['DELETE'])
